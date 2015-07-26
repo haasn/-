@@ -27,22 +27,22 @@ main = do
     setCurrentDirectory =<< fmap (</> "www") getHomeDirectory
     args <- getArgs
     case args of
-        [hash, name] -> go hash name
+        [hash, name] -> catch (go hash name) $ \e -> do
+                            print (e :: IOException)
+                            die
         _ -> die
 
 go :: String -> String -> IO ()
-go "true"  _ = withInput smallestHash
+go "true"  _ = withTempInput smallestHash
 go "false" name
     | null name = die
-    | otherwise = withInput $ \f -> do
-                    res <- trySave f name
-                    case res of
-                        Left e  -> print e >> die
-                        Right _ -> putURL name
+    | otherwise = do LB.hGetContents stdin >>= LB.writeFile name
+                     setFileMode name 0o444
+                     putURL name
 go _ _ = die
 
-withInput :: (FilePath -> IO ()) -> IO ()
-withInput callback = withTempFile ".." ".tmp" $ \f h -> do
+withTempInput :: (FilePath -> IO ()) -> IO ()
+withTempInput callback = withTempFile "." ".tmp" $ \f h -> do
     hSetBinaryMode h True
     LB.hGetContents stdin >>= LB.hPut h
     hClose h
@@ -50,8 +50,3 @@ withInput callback = withTempFile ".." ".tmp" $ \f h -> do
 
 smallestHash :: FilePath -> IO ()
 smallestHash _ = putStrLn "hash"
-
-trySave :: FilePath -> FilePath -> IO (Either IOException ())
-trySave f n = try $ do
-    renameFile f n
-    setFileMode n 0o444
