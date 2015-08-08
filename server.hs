@@ -2,7 +2,7 @@ import Control.Exception;
 
 import System.Directory;
 import System.Environment;
-import System.Exit;
+import System.Exit hiding (die);
 import System.IO;
 import System.IO.Temp;
 import System.FilePath;
