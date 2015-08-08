@@ -1,5 +1,5 @@
 ☃() {
-    local name="" hash=false stdin=false url=false nextname=false
+    local name="" hash=false stdin=false url=false nextname=false nofiles=true
 
     upload() {
         local hash=$1 url=$2 name="$3" file="$4"
@@ -12,11 +12,7 @@
         fi
     }
 
-    # If we use no parameter at all, just look at stdin
-    if [ -z "$*" ]; then
-        stdin=true
-    fi
-
+    # Go through the parameter list
     while [ "$1" != "" ]; do
         case "$1" in
             -h | --hash)
@@ -48,13 +44,14 @@
                     hash=false
                     url=false
                     name=""
+                    nofiles=false
                 fi
                 ;;
         esac
         shift
     done
 
-    if [ $stdin = true ]; then
-        upload true false "" /dev/stdin
+    if [ $stdin = true ] || [ $nofiles = true ]; then
+        upload $hash false "$name" /dev/stdin
     fi
 }
