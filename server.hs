@@ -20,7 +20,7 @@ die = do
 putURL :: String -> IO ()
 putURL name = do
     user <- getLoginName
-    putStrLn $ "https://☃.valk.nand.wakku.to/~" ++ user ++ "/" ++ name
+    putStrLn $ "http://☃.valk.nand.wakku.to/~" ++ user ++ "/" ++ name
 
 main :: IO ()
 main = do
