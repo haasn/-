@@ -5,10 +5,10 @@
         local hash=$1 url=$2 name="$3" file="$4"
         if [ $url = true ]; then
             # Upload from URL
-            ssh valkyrja "curl -s \"$file\" | /usr/local/bin/☃ $hash \"$name\""
+            ssh `whoami`@tina "curl -s \"$file\" | /usr/local/bin/☃ $hash \"$name\""
         else
             # Upload from local file
-            cat "$file" | lz4 | ssh valkyrja "lz4 -d | /usr/local/bin/☃ $hash \"$name\""
+            cat "$file" | lz4 | ssh `whoami`@tina "lz4 -d | /usr/local/bin/☃ $hash \"$name\""
         fi
     }
 
